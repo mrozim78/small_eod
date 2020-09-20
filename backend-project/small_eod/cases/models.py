@@ -14,12 +14,23 @@ class CaseQuerySet(models.QuerySet):
             letter_count=models.Count("letter"), note_count=models.Count("note")
         )
 
+    def with_nested_resources(self):
+        return (
+            self.prefetch_related("featureoptions")
+            .prefetch_related("responsible_users")
+            .prefetch_related("notified_users")
+            .prefetch_related("audited_institutions")
+            .prefetch_related("tags")
+        )
+
 
 class Case(TimestampUserLogModel):
     objects = CaseQuerySet.as_manager()
 
     name = models.CharField(
-        max_length=256, verbose_name=_("Name"), help_text=_("Case's name."),
+        max_length=256,
+        verbose_name=_("Name"),
+        help_text=_("Case's name."),
     )
     comment = models.CharField(
         max_length=256,
